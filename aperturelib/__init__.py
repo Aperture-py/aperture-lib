@@ -9,6 +9,20 @@ from .watermark import watermark_image
 from .watermark import watermark_text
 
 
+def open(f):
+    '''Opens an instance of a PIL Image.
+
+    This is a wrapper for the PIL Image open function.
+    
+    Args:
+        f: File path or File object.
+
+    Returns:
+        (PIL.Image) An instance of a PIL image.
+    '''
+    return Image.open(f)
+
+
 def format_image(path, options):
     '''Formats an image.
 
@@ -25,7 +39,7 @@ def format_image(path, options):
     return image_pipeline_results
 
 
-def save(image, out_file, quality):
+def save(image, out_file, **kwargs):
     '''Saves an instance of a PIL Image to the system.
 
     This is a wrapper for the PIL Image save function.
@@ -33,9 +47,10 @@ def save(image, out_file, quality):
     Args:
         img: An instance of a PIL Image.
         out_file: Path to save the image to.
-        quality: Quality to apply to the image.
+        **kwargs: Additonal save options supported by PIL.
+            (see https://pillow.readthedocs.io/en/5.1.x/handbook/image-file-formats.html)
     '''
-    image.save(out_file, optimize=True, quality=quality)
+    image.save(out_file, **kwargs)
 
 
 # Internal Methods

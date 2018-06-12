@@ -8,7 +8,7 @@ with open('README.md') as f:
 with open('LICENSE') as f:
     license = f.read()
 
-__version__ = '0.0.0.dev2'
+__version__ = '0.0.0.dev4'
 
 setup(
     name='aperturelib',
@@ -22,9 +22,6 @@ setup(
     packages=find_packages(
         exclude=['docs', 'tests*']
     ),  # prevent docs and tests from being installed on user's system as actual packages
-    classifiers=(
-        'Programming Language :: Python :: 3',
-        'License :: OSI Approved :: MIT License',
-        'Operating System :: OS Independant'
-    )
-)
+    classifiers=('Programming Language :: Python :: 3',
+                 'License :: OSI Approved :: MIT License',
+                 'Operating System :: OS Independant'))
