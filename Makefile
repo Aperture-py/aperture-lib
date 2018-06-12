@@ -19,3 +19,9 @@ document:
 dist:
 	python setup.py sdist bdist_wheel
 
+deploy-test:
+	twine upload dist/* --config-file .pypirc -r testpypi
+
+deploy-prod:
+	twine upload dist/* --config-file .pypirc
+
