@@ -7,4 +7,3 @@ exclude Pipefile.lock
 exclude .vscode
 exclude .pylintrc
 exclude .pypirc
-exclude setup.cfg
