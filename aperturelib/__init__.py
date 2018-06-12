@@ -59,30 +59,33 @@ def __pipeline_image(image, options):
 
     # 1. Create image copies for each resolution
 
-    resolutions = options['resolutions']  # List of resolution tuples
-    for res in resolutions:
-        img_rs = resize(image, res)  # Resized image
+    if 'resolutions' in options:
+        resolutions = options['resolutions']  # List of resolution tuples
+        for res in resolutions:
+            img_rs = resize(image, res)  # Resized image
 
-        # Add image to result set. This result set will be pulled from
-        # throughout the pipelining process to perform more processing (watermarking).
-        results.append(img_rs)
+            # Add image to result set. This result set will be pulled from
+            # throughout the pipelining process to perform more processing (watermarking).
+            results.append(img_rs)
 
     # 2. Apply watermark to each image copy
-    wtrmk_path = options['wmark-img']
-    if wtrmk_path:
-        if len(results) == 0:
-            watermark_image(image, wtrmk_path)  #watermark actual image?
-        else:
-            for img in results:
-                watermark_image(img, wtrmk_path)  #watermark actual image
+    if 'wmark-img' in options:
+        wtrmk_path = options['wmark-img']
+        if wtrmk_path:
+            if len(results) == 0:
+                watermark_image(image, wtrmk_path)  #watermark actual image?
+            else:
+                for img in results:
+                    watermark_image(img, wtrmk_path)  #watermark actual image
 
-    wtrmk_txt = options['wmark-txt']
-    if wtrmk_txt:
-        if len(results) == 0:
-            watermark_text(image, wtrmk_txt)  #watermark actual image?
-        else:
-            for img in results:
-                watermark_text(img, wtrmk_txt)  #watermark actual image
+    if 'wmark-txt' in options:
+        wtrmk_txt = options['wmark-txt']
+        if wtrmk_txt:
+            if len(results) == 0:
+                watermark_text(image, wtrmk_txt)  #watermark actual image?
+            else:
+                for img in results:
+                    watermark_text(img, wtrmk_txt)  #watermark actual image
 
     # Fallback: Nothing was done to the image
     if len(results) == 0:
