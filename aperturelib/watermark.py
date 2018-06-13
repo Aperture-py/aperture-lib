@@ -1,4 +1,13 @@
 from PIL import Image, ImageDraw, ImageFont
+from os.path import dirname  #, join
+
+from zipfile import ZipFile
+FONT_PATH = ''
+with ZipFile(dirname(dirname(dirname(__file__))), 'r') as myzip:
+    FONT_PATH = myzip.extract(
+        'aperture/aperturelib/resources/fonts/SourceSansPro-Regular.ttf')
+    # Doesn't work because either the .egg archive or the ZipFile object uses forward slashes regardless of OS
+    # member=join('aperture', 'aperturelib', 'resources', 'fonts', 'SourceSansPro-Regular.ttf'))
 
 
 def watermark_image(image, wtrmrk_path, corner=2):
@@ -68,26 +77,28 @@ def watermark_text(image, text, corner=2):
     # the height of the base image.
     img_fraction = 0.05
 
-    # attempt to use arial font. If that fails, use default
+    # attempt to use Aperture default font. If that fails, use ImageFont default
     try:
-        font = ImageFont.truetype('arial.ttf', fontsize)
+        font = ImageFont.truetype(font=FONT_PATH, size=fontsize)
+        was_over = False
+        inc = 2
+        while True:
+            if font.getsize(text)[1] > img_fraction * image.height:
+                if not was_over:
+                    was_over = True
+                    inc = -1
+            else:
+                if was_over:
+                    break
+            # iterate until the text size is just larger than the criteria
+            fontsize += inc
+            font = ImageFont.truetype(font=FONT_PATH, size=fontsize)
+        fontsize -= 1
+        font = ImageFont.truetype(font=FONT_PATH, size=fontsize)
     except:
-        font = ImageFont.load_default()
-    was_over = False
-    inc = 2
-    while True:
-        if font.getsize(text)[1] > img_fraction * image.height:
-            if not was_over:
-                was_over = True
-                inc = -1
-        else:
-            if was_over:
-                break
-        # iterate until the text size is just larger than the criteria
-        fontsize += inc
-        font = ImageFont.truetype('arial.ttf', fontsize)
-    fontsize -= 1
-    font = ImageFont.truetype('arial.ttf', fontsize)
+        # replace with log message
+        print('Failed to load Aperture font. Using default font instead.')
+        font = ImageFont.load_default()  # Bad because default is suuuuper small
 
     # get position of text
     pos = get_pos(corner, image.size, font.getsize(text), padding)

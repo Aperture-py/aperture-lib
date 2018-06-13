@@ -22,6 +22,7 @@ setup(
     packages=find_packages(
         exclude=['docs', 'tests*']
     ),  # prevent docs and tests from being installed on user's system as actual packages
+    include_package_data=True,
     classifiers=('Programming Language :: Python :: 3',
                  'License :: OSI Approved :: MIT License',
                  'Operating System :: OS Independant'))
