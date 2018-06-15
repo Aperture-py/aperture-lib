@@ -1,13 +1,5 @@
 from PIL import Image, ImageDraw, ImageFont
-from os.path import dirname  #, join
-
-from zipfile import ZipFile
-FONT_PATH = ''
-with ZipFile(dirname(dirname(dirname(__file__))), 'r') as myzip:
-    FONT_PATH = myzip.extract(
-        'aperture/aperturelib/resources/fonts/SourceSansPro-Regular.ttf')
-    # Doesn't work because either the .egg archive or the ZipFile object uses forward slashes regardless of OS
-    # member=join('aperture', 'aperturelib', 'resources', 'fonts', 'SourceSansPro-Regular.ttf'))
+from pkg_resources import resource_exists, resource_filename, cleanup_resources
 
 
 def watermark_image(image, wtrmrk_path, corner=2):
@@ -29,8 +21,7 @@ def watermark_image(image, wtrmrk_path, corner=2):
             changed in the future by either creating a new cmd-line
             flag or putting this in the config file.
 
-    Returns: Nothing. Watermark is applied directly to the supplied
-        image in place.
+    Returns: The watermarked image
     '''
     padding = 2
     wtrmrk_img = Image.open(wtrmrk_path)
@@ -45,7 +36,24 @@ def watermark_image(image, wtrmrk_path, corner=2):
 
     pos = get_pos(corner, image.size, wtrmrk_img.size, padding)
 
-    image.paste(wtrmrk_img, pos, wtrmrk_img.convert('RGBA'))
+    was_P = image.mode == 'P'
+    was_L = image.mode == 'L'
+
+    # Fix PIL palette issue by converting palette images to RGBA
+    if image.mode not in ['RGB', 'RGBA']:
+        if image.format in ['JPG', 'JPEG']:
+            image = image.convert('RGB')
+        else:
+            image = image.convert('RGBA')
+
+    image.paste(wtrmrk_img.convert('RGBA'), pos, wtrmrk_img.convert('RGBA'))
+
+    if was_P:
+        image = image.convert('P', palette=Image.ADAPTIVE, colors=256)
+    elif was_L:
+        image = image.convert('L')
+
+    return image
 
 
 def watermark_text(image, text, corner=2):
@@ -66,12 +74,32 @@ def watermark_text(image, text, corner=2):
             changed in the future by either creating a new cmd-line
             flag or putting this in the config file.
 
-    Returns: Nothing. Watermark is applied directly to the supplied
-        image in place.
+    Returns: The watermarked image
     '''
+
+    # Load Font
+    FONT_PATH = ''
+    if resource_exists(__name__, 'resources/fonts/SourceSansPro-Regular.ttf'):
+        FONT_PATH = resource_filename(
+            __name__, 'resources/fonts/SourceSansPro-Regular.ttf')
+
     padding = 5
+
+    was_P = image.mode == 'P'
+    was_L = image.mode == 'L'
+
+    # Fix PIL palette issue by converting palette images to RGBA
+    if image.mode not in ['RGB', 'RGBA']:
+        if image.format in ['JPG', 'JPEG']:
+            image = image.convert('RGB')
+        else:
+            image = image.convert('RGBA')
+
+    # Get drawable image
     img_draw = ImageDraw.Draw(image)
+
     fontsize = 1  # starting font size
+
     # portion of image width you want text height to be.
     # default font size will have a height that is ~1/20
     # the height of the base image.
@@ -111,6 +139,18 @@ def watermark_text(image, text, corner=2):
 
     # draw the actual text
     img_draw.text(pos, text, font=font, fill='white')
+
+    # Remove cached font file
+    stuff_deleted = cleanup_resources()
+    print('stuff not deleted: ', stuff_deleted)
+    del img_draw
+
+    if was_P:
+        image = image.convert('P', palette=Image.ADAPTIVE, colors=256)
+    elif was_L:
+        image = image.convert('L')
+
+    return image
 
 
 # Internal method
