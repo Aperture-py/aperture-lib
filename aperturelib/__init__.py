@@ -84,23 +84,23 @@ def __pipeline_image(image, options):
             results.append(img_rs)
 
     # 2. Apply watermark to each image copy
-    if 'wmark-img' in options:
-        wtrmk_path = options['wmark-img']
-        if wtrmk_path:
-            if len(results) == 0:
-                watermark_image(image, wtrmk_path)  #watermark actual image?
-            else:
-                for img in results:
-                    watermark_image(img, wtrmk_path)  #watermark actual image
+    wtrmk_path = options['wmark-img']
+    if wtrmk_path:
+        if len(results) == 0:
+            image = watermark_image(image, wtrmk_path)  #watermark actual image?
+        else:
+            for i in range(0, len(results)):
+                results[i] = watermark_image(
+                    results[i], wtrmk_path)  #watermark actual image
 
-    if 'wmark-txt' in options:
-        wtrmk_txt = options['wmark-txt']
-        if wtrmk_txt:
-            if len(results) == 0:
-                watermark_text(image, wtrmk_txt)  #watermark actual image?
-            else:
-                for img in results:
-                    watermark_text(img, wtrmk_txt)  #watermark actual image
+    wtrmk_txt = options['wmark-txt']
+    if wtrmk_txt:
+        if len(results) == 0:
+            image = watermark_text(image, wtrmk_txt)  #watermark actual image?
+        else:
+            for i in range(0, len(results)):
+                results[i] = watermark_text(results[i],
+                                            wtrmk_txt)  #watermark actual image
 
     # Fallback: Nothing was done to the image
     if len(results) == 0:

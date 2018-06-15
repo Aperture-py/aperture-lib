@@ -7,3 +7,4 @@ exclude Pipefile.lock
 exclude .vscode
 exclude .pylintrc
 exclude .pypirc
+include aperturelib/resources/fonts/*
