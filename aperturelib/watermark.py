@@ -141,8 +141,7 @@ def watermark_text(image, text, corner=2):
     img_draw.text(pos, text, font=font, fill='white')
 
     # Remove cached font file
-    stuff_deleted = cleanup_resources()
-    print('stuff not deleted: ', stuff_deleted)
+    cleanup_resources()
     del img_draw
 
     if was_P:
