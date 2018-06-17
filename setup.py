@@ -8,7 +8,7 @@ with open('README.md') as f:
 with open('LICENSE') as f:
     license = f.read()
 
-__version__ = '0.0.0.dev7'
+__version__ = '0.0.0.dev8'
 
 setup(
     name='aperturelib',
