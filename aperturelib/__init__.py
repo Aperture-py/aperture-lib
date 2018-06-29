@@ -35,25 +35,8 @@ def format_image(path, options):
         1 unless resolutions for resizing are provided in the options. 
     '''
     image = Image.open(path)
-    image_pipeline_results = __pipeline_image(image, options, False)
-    return image_pipeline_results
-
-
-def format_image_get_resolutions(path, options):
-    '''Formats an image.
-
-    Args:
-        path (str): Path to the image file.
-        options (dict): Options to apply to the image.
-
-    Returns:
-        (list) A list of tuples containing PIL images and w,h tuples 
-        representing resolutions. The list will always be of length
-        1 unless resolutions for resizing are provided in the options. 
-    '''
-    image = Image.open(path)
-    image_pipeline_results = __pipeline_image(image, options, True)
-    return image_pipeline_results    
+    image_pipeline_results = __pipeline_image(image, options)
+    return image_pipeline_results 
 
 
 def save(image, out_file, **kwargs):
@@ -74,13 +57,12 @@ def save(image, out_file, **kwargs):
 # =========================
 
 
-def __pipeline_image(image, options, ret_resolutions):
+def __pipeline_image(image, options):
     '''Sends an image through a processing pipeline.
     Applies all (relevant) provided options to a given image.
     Args:
         image: An instance of a PIL Image.
         options: Options to apply to the image (i.e. resolutions).
-        ret_resolutions (bool): Whether formatted images should be returned with their resolutions (if resolutions were changed)
     Returns:
         A list containing instances of PIL Images. This list will always be length
         1 if no options exist that require multiple copies to be created for a single
@@ -91,7 +73,6 @@ def __pipeline_image(image, options, ret_resolutions):
     # Begin pipline
 
     # 1. Create image copies for each resolution
-    resolutions = []
     if 'resolutions' in options:
         resolutions = options['resolutions']  # List of resolution tuples
         for res in resolutions:
@@ -126,9 +107,4 @@ def __pipeline_image(image, options, ret_resolutions):
     if len(results) == 0:
         results.append(image)
     
-    if ret_resolutions:
-        if resolutions:
-            if len(resolutions) == len(results):
-                results = list(zip(results, resolutions))
-
     return results
