@@ -1,0 +1,10 @@
+# Files to include or exclude in the source distribution
+include LICENSE
+include README.md
+exclude .gitignore
+exclude Pipfile
+exclude Pipefile.lock
+exclude .vscode
+exclude .pylintrc
+exclude .pypirc
+include aperturelib/resources/fonts/*

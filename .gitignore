@@ -1,0 +1,21 @@
+# Directories
+__pycache__
+.vscode
+
+# Files
+.DS_Store
+*.jpg
+*.JPEG
+*.png
+*.gif
+.aperture
+.pypirc
+
+# Build artifacts
+*.egg-info
+build
+dist
+
+# Doc Files
+docs/**
+!docs/conf.py

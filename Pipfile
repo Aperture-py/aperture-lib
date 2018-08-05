@@ -1,0 +1,19 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+pillow = "==5.0.0"
+
+[dev-packages]
+pylint = "*"
+yapf = "*"
+wheel = "*"
+pylint-quotes = "*"
+sphinx = "*"
+sphinx-rtd-theme = "*"
+twine = "*"
+
+[requires]
+python_version = "3.6"
